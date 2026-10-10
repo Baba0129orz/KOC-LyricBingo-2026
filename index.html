@@ -757,7 +757,6 @@
     }
 
     function loadState() {
-      // 1. Check URL Hash and Query params (Cross-device restoration)
       let rawData = "";
       if (window.location.hash && window.location.hash.includes("data=")) {
         const match = window.location.hash.match(/data=([^&]+)/);
@@ -770,7 +769,6 @@
 
       if (rawData) {
         try {
-          // Normalize URL-safe Base64 and clean up space/percent issues
           let cleanStr = decodeURIComponent(rawData).trim();
           cleanStr = cleanStr.replace(/ /g, "+").replace(/-/g, "+").replace(/_/g, "/");
           while (cleanStr.length % 4 !== 0) {
@@ -798,7 +796,6 @@
         }
       }
 
-      // 2. Fallback to localStorage on same device
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
@@ -825,10 +822,8 @@
         };
         const jsonStr = JSON.stringify(payload);
         const encoded = utf8ToBase64(jsonStr);
-        // Make URL-safe: Replace + with -, / with _, remove padding =
         const urlSafeEncoded = encoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 
-        // Determine base URL
         let baseUrl = OFFICIAL_BASE_URL;
         if (window.location.origin && window.location.origin !== "null" && !window.location.href.startsWith("about:")) {
           baseUrl = window.location.origin + window.location.pathname;
@@ -1346,15 +1341,12 @@
       saveState();
     });
 
-    // Multi-device safe Clipboard helper (Works on mobile Safari, Android, and Desktop)
     async function copyToClipboard(text) {
       if (navigator.clipboard && window.isSecureContext) {
         try {
           await navigator.clipboard.writeText(text);
           return true;
-        } catch (e) {
-          // fall through to fallback
-        }
+        } catch (e) {}
       }
 
       const textArea = document.createElement("textarea");
@@ -1426,9 +1418,9 @@
       const center = getCenterIndex(size);
       const isDow = isDow90000(currentArtist);
 
-      // Re-calculated canvas height and card layout: Plenty of room for clean footer and disclaimer
+      // Balanced mobile-friendly dimensions with comfortable margins
       const width = 1200;
-      const height = 1520;
+      const height = 1500;
       canvas.width = width;
       canvas.height = height;
 
@@ -1448,7 +1440,7 @@
       const cardX = 40;
       const cardY = 36;
       const cardW = width - 80;   // 1120px
-      const cardH = 1390;         // Card ends at 36 + 1390 = 1426px
+      const cardH = 1370;         // Clean bottom margin: 36 + 1370 = 1406px
 
       // Drop shadow for the card
       ctx.fillStyle = "#1E1E2F";
@@ -1657,33 +1649,33 @@
         }
       }
 
-      // Clean footer inside card: perfectly positioned with plenty of breathing room
-      const cellsBottomY = gridAreaY + gridAreaSize; // 278 + 980 = 1258px
-      const footerY1 = cellsBottomY + 36;             // 1294px (Well within cardH of 1390px)
-      const footerY2 = footerY1 + 26;                 // 1320px
+      // Elegant single-line footer inside the card
+      const cellsBottomY = gridAreaY + gridAreaSize;
+      const footerY = cellsBottomY + 45; // Perfectly centered between cells and card bottom
       const footerBadgeText = currentArtist ? `★ ${currentArtist.toUpperCase()} ★` : "★ FINALIST ★";
 
+      // Left: Artist badge
       ctx.fillStyle = "#64748B";
       ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(footerBadgeText, gridAreaX + 6, footerY1);
+      ctx.fillText(footerBadgeText, gridAreaX + 4, footerY);
 
+      // Right: Hashtag + Creator credit unified on a single neat line
       ctx.textAlign = "right";
-      ctx.fillText("#KOCリリック予想ビンゴ", gridAreaX + gridAreaSize - 6, footerY1);
+      ctx.fillText("#KOCリリック予想ビンゴ", gridAreaX + gridAreaSize - 165, footerY);
 
       ctx.fillStyle = "#94A3B8";
       ctx.font = 'bold 15px "M PLUS Rounded 1c", sans-serif';
-      ctx.textAlign = "center";
-      ctx.fillText("Created by @Baba0129orz", width / 2, footerY2);
+      ctx.fillText("|  by @Baba0129orz", gridAreaX + gridAreaSize, footerY);
 
-      // Bottom disclaimer line outside card on dotted pattern: cleanly isolated
+      // Bottom disclaimer: Positioned comfortably with balanced margins
       ctx.fillStyle = "#64748B";
-      ctx.font = 'bold 13px "M PLUS Rounded 1c", sans-serif';
+      ctx.font = 'bold 13.5px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
       ctx.fillText(
         "※本ツールはファンによる非公式の予想企画です。TBSや公式関係者、出演者等とは一切関係ありません。",
         width / 2,
-        height - 30
+        1455
       );
 
       return canvas.toDataURL("image/png");
@@ -1719,7 +1711,6 @@
     modalSaveImageActionBtn.addEventListener("click", async () => {
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-      // 1. iOS: Save directly to camera roll via Web Share API
       if (isIOS && currentImageBlob && navigator.canShare) {
         try {
           const file = new File([currentImageBlob], currentImageFileName, { type: "image/png" });
@@ -1739,7 +1730,6 @@
         }
       }
 
-      // 2. PC (Windows/Mac): Save As picker dialog
       if (!isIOS && window.showSaveFilePicker && currentImageBlob) {
         try {
           const handle = await window.showSaveFilePicker({
@@ -1763,7 +1753,6 @@
         }
       }
 
-      // 3. Fallback direct file download
       if (currentImageBlob) {
         const blobUrl = URL.createObjectURL(currentImageBlob);
         const a = document.createElement("a");
@@ -1776,7 +1765,6 @@
         return;
       }
 
-      // 4. DataURL fallback
       const a = document.createElement("a");
       a.href = generatedImageEl.src;
       a.download = currentImageFileName;
