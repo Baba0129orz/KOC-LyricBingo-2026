@@ -1403,6 +1403,24 @@
       ctx.closePath();
     }
 
+    // Helper to load SVG markup as Image object for identical canvas rendering
+    function loadSvgImage(svgMarkup) {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        const svgBlob = new Blob([svgMarkup], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(svgBlob);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          resolve(img);
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(url);
+          resolve(null);
+        };
+        img.src = url;
+      });
+    }
+
     async function generateBingoImage() {
       if (document.fonts && document.fonts.ready) {
         try {
@@ -1417,6 +1435,11 @@
       const size = currentSize;
       const center = getCenterIndex(size);
       const isDow = isDow90000(currentArtist);
+
+      // Pre-load the exact vector SVG icons used in the HTML web preview
+      const activeFreeSvg = isDow ? CRAB_SVG_INNER : CROWN_SVG_INNER;
+      const freeImg = await loadSvgImage(activeFreeSvg);
+      const hitCrabImg = isDow ? await loadSvgImage(CRAB_SVG_INNER) : null;
 
       // Balanced mobile-friendly dimensions with comfortable margins
       const width = 1200;
@@ -1473,15 +1496,37 @@
       ctx.lineWidth = 4.5;
       ctx.stroke();
 
-      // Top Tag Badge
+      // Board Header Badge Row: Exactly match Web Preview
+      // Left pill: "KOCリリック予想ビンゴ", Right pill: "5×5" or "3×3"
+      const badgeY = cardY + 32;
+      const badgeH = 30;
+
+      // Dark Badge: "KOCリリック予想ビンゴ"
+      const darkBadgeW = 210;
+      const darkBadgeX = width / 2 - 145;
       ctx.fillStyle = "#1E1E2F";
-      drawSafeRoundRect(ctx, width / 2 - 140, cardY + 32, 280, 32, 16);
+      drawSafeRoundRect(ctx, darkBadgeX, badgeY, darkBadgeW, badgeH, 15);
       ctx.fill();
 
       ctx.fillStyle = "#FFFFFF";
-      ctx.font = 'bold 16px "M PLUS Rounded 1c", sans-serif';
+      ctx.font = 'bold 15px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText("KOC 2026 OP RAP BINGO", width / 2, cardY + 54);
+      ctx.fillText("KOCリリック予想ビンゴ", darkBadgeX + darkBadgeW / 2, badgeY + 20);
+
+      // Amber Badge: "5×5" or "3×3"
+      const sizeBadgeW = 66;
+      const sizeBadgeX = darkBadgeX + darkBadgeW + 10;
+      ctx.fillStyle = "#FEF3C7";
+      drawSafeRoundRect(ctx, sizeBadgeX, badgeY, sizeBadgeW, badgeH, 15);
+      ctx.fill();
+      ctx.strokeStyle = "#FCD34D";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = "#92400E";
+      ctx.font = 'bold 15px "M PLUS Rounded 1c", sans-serif';
+      ctx.textAlign = "center";
+      ctx.fillText(`${size}×${size}`, sizeBadgeX + sizeBadgeW / 2, badgeY + 20);
 
       // Artist Title
       const displayTitle = currentArtist || "芸人を選択";
@@ -1489,18 +1534,19 @@
       const titleLen = displayTitle.length;
       const titleFontSize = titleLen > 14 ? 38 : (titleLen > 10 ? 44 : (titleLen > 6 ? 48 : 54));
       ctx.font = `bold ${titleFontSize}px "Dela Gothic One", "M PLUS Rounded 1c", sans-serif`;
-      ctx.fillText(displayTitle, width / 2, cardY + 112);
+      ctx.fillText(displayTitle, width / 2, cardY + 110);
 
       // Subtitle
       ctx.fillStyle = "#64748B";
-      ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
-      ctx.fillText("OP紹介ラップで飛び出す言葉を的中させろ！", width / 2, cardY + 144);
+      ctx.font = 'bold 17px "M PLUS Rounded 1c", sans-serif';
+      ctx.fillText("OP紹介ラップで飛び出す言葉を的中させろ！", width / 2, cardY + 142);
 
-      // Stats Banner
-      const statsY = cardY + 162;
+      // Stats Banner: Exactly match Web Preview (Border-2, split left HIT and right BINGO)
+      const statsY = cardY + 160;
       const statsW = cardW - 80;
+      const statsX = cardX + 40;
       ctx.fillStyle = "#FEF3C7";
-      drawSafeRoundRect(ctx, cardX + 40, statsY, statsW, 40, 12);
+      drawSafeRoundRect(ctx, statsX, statsY, statsW, 42, 12);
       ctx.fill();
       ctx.strokeStyle = "#1E1E2F";
       ctx.lineWidth = 3;
@@ -1510,10 +1556,33 @@
       const bingos = bingoCountEl.textContent;
       const total = size * size;
 
-      ctx.fillStyle = "#1E1E2F";
-      ctx.font = 'bold 20px "M PLUS Rounded 1c", sans-serif';
-      ctx.textAlign = "center";
-      ctx.fillText(`HIT: ${hits} / ${total}　　|　　BINGO: ${bingos} 列達成！`, width / 2, statsY + 27);
+      // Left: HIT: X / 25
+      ctx.textAlign = "left";
+      ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
+      ctx.fillStyle = "#64748B";
+      ctx.fillText("HIT:", statsX + 24, statsY + 27);
+
+      ctx.fillStyle = "#FF3131";
+      ctx.font = 'bold 22px "Dela Gothic One", sans-serif';
+      ctx.fillText(`${hits}`, statsX + 70, statsY + 28);
+
+      ctx.fillStyle = "#94A3B8";
+      ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
+      ctx.fillText(` / ${total}`, statsX + 70 + (hits.length * 16) + 4, statsY + 27);
+
+      // Right: BINGO: Y 列達成！
+      ctx.textAlign = "right";
+      ctx.fillStyle = "#64748B";
+      ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
+      ctx.fillText("列達成！", statsX + statsW - 24, statsY + 27);
+
+      ctx.fillStyle = "#D97706";
+      ctx.font = 'bold 22px "Dela Gothic One", sans-serif';
+      ctx.fillText(`${bingos}`, statsX + statsW - 98, statsY + 28);
+
+      ctx.fillStyle = "#64748B";
+      ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
+      ctx.fillText("BINGO:", statsX + statsW - 104 - (bingos.length * 16), statsY + 27);
 
       // Grid Coordinates
       const gridAreaSize = 980;
@@ -1580,14 +1649,22 @@
           ctx.stroke();
 
           if (isFree) {
-            ctx.fillStyle = "#F59E0B";
-            ctx.font = '42px "M PLUS Rounded 1c", sans-serif';
-            ctx.textAlign = "center";
-            ctx.fillText(isDow ? "🦀" : "👑", cx + cellSize / 2, cy + cellSize / 2 - 4);
+            // Render exact SVG vector image for FREE cell
+            if (freeImg) {
+              const iconSize = cellSize * 0.44;
+              ctx.drawImage(
+                freeImg,
+                cx + (cellSize - iconSize) / 2,
+                cy + cellSize * 0.16,
+                iconSize,
+                iconSize
+              );
+            }
 
             ctx.fillStyle = "#1E1E2F";
-            ctx.font = 'bold 24px "Dela Gothic One", sans-serif';
-            ctx.fillText("FREE", cx + cellSize / 2, cy + cellSize / 2 + 32);
+            ctx.font = 'bold 19px "Dela Gothic One", sans-serif';
+            ctx.textAlign = "center";
+            ctx.fillText("FREE", cx + cellSize / 2, cy + cellSize * 0.82);
           } else {
             const rawText = cell.text ? cell.text.trim() : "";
             if (rawText) {
@@ -1621,15 +1698,20 @@
             }
           }
 
-          // HIT Rubber Stamp
+          // HIT Rubber Stamp: Render exact SVG crab or standard HIT stamp
           if (cell.hit && !isFree) {
             ctx.save();
-            ctx.translate(cx + cellSize - 24, cy + 24);
-            if (isDow) {
-              ctx.font = "32px sans-serif";
-              ctx.textAlign = "center";
-              ctx.fillText("🦀", 0, 10);
+            if (isDow && hitCrabImg) {
+              const stampSize = 42;
+              ctx.drawImage(
+                hitCrabImg,
+                cx + cellSize - stampSize - 4,
+                cy + 4,
+                stampSize,
+                stampSize
+              );
             } else {
+              ctx.translate(cx + cellSize - 24, cy + 24);
               ctx.rotate(-15 * Math.PI / 180);
               ctx.fillStyle = "#FF3131";
               ctx.beginPath();
@@ -1649,26 +1731,36 @@
         }
       }
 
-      // Elegant single-line footer inside the card
+      // Elegant footer inside the card with matching separator border
       const cellsBottomY = gridAreaY + gridAreaSize;
-      const footerY = cellsBottomY + 45; // Perfectly centered between cells and card bottom
+
+      // Divider line: Match Web Preview (border-t-2 border-slate-200)
+      const dividerY = cellsBottomY + 16;
+      ctx.beginPath();
+      ctx.moveTo(gridAreaX, dividerY);
+      ctx.lineTo(gridAreaX + gridAreaSize, dividerY);
+      ctx.strokeStyle = "#E2E8F0";
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      const footerY = dividerY + 32;
       const footerBadgeText = currentArtist ? `★ ${currentArtist.toUpperCase()} ★` : "★ FINALIST ★";
 
       // Left: Artist badge
       ctx.fillStyle = "#64748B";
-      ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
+      ctx.font = 'bold 17px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "left";
       ctx.fillText(footerBadgeText, gridAreaX + 4, footerY);
 
-      // Right: Hashtag + Creator credit unified on a single neat line
+      // Right: Hashtag + Creator credit
       ctx.textAlign = "right";
-      ctx.fillText("#KOCリリック予想ビンゴ", gridAreaX + gridAreaSize - 165, footerY);
+      ctx.fillText("#KOCリリック予想ビンゴ", gridAreaX + gridAreaSize - 160, footerY);
 
       ctx.fillStyle = "#94A3B8";
       ctx.font = 'bold 15px "M PLUS Rounded 1c", sans-serif';
       ctx.fillText("|  by @Baba0129orz", gridAreaX + gridAreaSize, footerY);
 
-      // Bottom disclaimer: Positioned comfortably with balanced margins
+      // Bottom disclaimer outside the card
       ctx.fillStyle = "#64748B";
       ctx.font = 'bold 13.5px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
