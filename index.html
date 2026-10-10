@@ -10,11 +10,11 @@
   <meta property="og:description" content="OP紹介ラップで飛び出す言葉を的中させろ！" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://baba0129orz.github.io/KOC-LyricBingo-2026/" />
-  <meta property="og:image" content="https://baba0129orz.github.io/KOC-LyricBingo-2026/ogp.png" />
+  <meta property="og:image" content="https://baba0129orz.github.io/KOC-LyricBingo-2026/ogp.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="KOCリリック予想ビンゴ | キングオブコント2026" />
   <meta name="twitter:description" content="OP紹介ラップで飛び出す言葉を的中させろ！" />
-  <meta name="twitter:image" content="https://baba0129orz.github.io/KOC-LyricBingo-2026/ogp.png" />
+  <meta name="twitter:image" content="https://baba0129orz.github.io/KOC-LyricBingo-2026/ogp.jpg" />
 
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -532,6 +532,7 @@
 
   <script>
     const STORAGE_KEY = "koc_lyric_bingo_2026_data";
+    const OFFICIAL_BASE_URL = "https://baba0129orz.github.io/KOC-LyricBingo-2026/";
 
     const FINALISTS_2026 = [
       "ダウ90000",
@@ -553,6 +554,31 @@
     let editingCellIndex = null;
     let boardCells = [];
     let shuffledFinalists = [];
+
+    // Unicode safe Base64 encoder/decoder (Fixes Japanese & emojis without error)
+    function utf8ToBase64(str) {
+      if (window.TextEncoder) {
+        const bytes = new TextEncoder().encode(str);
+        let binary = "";
+        for (let i = 0; i < bytes.length; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary);
+      }
+      return btoa(unescape(encodeURIComponent(str)));
+    }
+
+    function base64ToUtf8(b64) {
+      const binary = atob(b64);
+      if (window.TextDecoder) {
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) {
+          bytes[i] = binary.charCodeAt(i);
+        }
+        return new TextDecoder().decode(bytes);
+      }
+      return decodeURIComponent(escape(binary));
+    }
 
     // Crab SVG (Dow90000 unique theme)
     const CRAB_SVG_INNER = `
@@ -727,10 +753,33 @@
     }
 
     function loadState() {
-      if (window.location.hash && window.location.hash.startsWith("#data=")) {
+      // 1. Check URL Hash and Query params (Cross-device restoration)
+      let rawData = "";
+      if (window.location.hash && window.location.hash.includes("data=")) {
+        const match = window.location.hash.match(/data=([^&]+)/);
+        if (match) rawData = match[1];
+      }
+      if (!rawData && window.location.search && window.location.search.includes("data=")) {
+        const params = new URLSearchParams(window.location.search);
+        rawData = params.get("data") || "";
+      }
+
+      if (rawData) {
         try {
-          const encoded = window.location.hash.substring(6);
-          const jsonStr = decodeURIComponent(escape(atob(encoded)));
+          // Normalize URL-safe Base64 and clean up space/percent issues
+          let cleanStr = decodeURIComponent(rawData).trim();
+          cleanStr = cleanStr.replace(/ /g, "+").replace(/-/g, "+").replace(/_/g, "/");
+          while (cleanStr.length % 4 !== 0) {
+            cleanStr += "=";
+          }
+
+          let jsonStr = "";
+          try {
+            jsonStr = base64ToUtf8(cleanStr);
+          } catch (e1) {
+            jsonStr = decodeURIComponent(escape(atob(cleanStr)));
+          }
+
           const parsed = JSON.parse(jsonStr);
           if (parsed && Array.isArray(parsed.boardCells)) {
             currentSize = parsed.currentSize === 3 ? 3 : 5;
@@ -741,10 +790,11 @@
             return true;
           }
         } catch (err) {
-          console.error("Failed to parse board state from URL hash:", err);
+          console.error("Failed to parse board state from URL hash/param:", err);
         }
       }
 
+      // 2. Fallback to localStorage on same device
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
@@ -770,12 +820,21 @@
           boardCells
         };
         const jsonStr = JSON.stringify(payload);
-        const encoded = btoa(unescape(encodeURIComponent(jsonStr)));
-        const url = new URL(window.location.href);
-        url.hash = `data=${encoded}`;
+        const encoded = utf8ToBase64(jsonStr);
+        // Make URL-safe: Replace + with -, / with _, remove padding =
+        const urlSafeEncoded = encoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+        // Determine base URL (Ensure valid GitHub Pages origin even if in local/preview)
+        let baseUrl = OFFICIAL_BASE_URL;
+        if (window.location.origin && window.location.origin !== "null" && !window.location.href.startsWith("about:")) {
+          baseUrl = window.location.origin + window.location.pathname;
+        }
+
+        const url = new URL(baseUrl);
+        url.hash = `data=${urlSafeEncoded}`;
         return url.href;
       } catch (e) {
-        return window.location.href;
+        return OFFICIAL_BASE_URL;
       }
     }
 
@@ -1283,22 +1342,52 @@
       saveState();
     });
 
-    copyUrlBackupBtn.addEventListener("click", () => {
-      const shareUrl = generateShareableURL();
-      const tempInput = document.createElement("input");
-      tempInput.value = shareUrl;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand("copy");
-        copyUrlBackupBtn.innerHTML = `<span>✅ 盤面URLをコピーしました！（当日復元できます）</span>`;
-        setTimeout(() => {
-          copyUrlBackupBtn.innerHTML = `<span>🔗 現在の盤面URLをコピー（当日復元用保存）</span>`;
-        }, 3000);
-      } catch (err) {
-        prompt("以下のURLをコピーして保存してください:", shareUrl);
+    // Multi-device safe Clipboard helper (Works on mobile Safari, Android, and Desktop)
+    async function copyToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(text);
+          return true;
+        } catch (e) {
+          // fall through to fallback
+        }
       }
-      document.body.removeChild(tempInput);
+
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      textArea.style.position = "fixed";
+      textArea.style.left = "-999999px";
+      textArea.style.top = "-999999px";
+      textArea.setAttribute("readonly", "");
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      textArea.setSelectionRange(0, 999999);
+
+      let successful = false;
+      try {
+        successful = document.execCommand("copy");
+      } catch (err) {
+        successful = false;
+      }
+      document.body.removeChild(textArea);
+      return successful;
+    }
+
+    copyUrlBackupBtn.addEventListener("click", async () => {
+      const shareUrl = generateShareableURL();
+      const success = await copyToClipboard(shareUrl);
+
+      if (success) {
+        copyUrlBackupBtn.innerHTML = `<span>✅ 盤面URLをコピーしました！（別端末でも復元可能）</span>`;
+      } else {
+        prompt("以下のURLをコピーして保存・別端末へ送信してください:", shareUrl);
+        copyUrlBackupBtn.innerHTML = `<span>🔗 現在の盤面URLをコピー</span>`;
+      }
+
+      setTimeout(() => {
+        copyUrlBackupBtn.innerHTML = `<span>🔗 現在の盤面URLをコピー（当日復元用保存）</span>`;
+      }, 3000);
     });
 
     function drawSafeRoundRect(ctx, x, y, w, h, r) {
@@ -1704,7 +1793,7 @@
       const spacedArtist = currentArtist ? currentArtist.split("").join(" ") : "";
       const targetLabel = spacedArtist ? `【予想: ${spacedArtist}】` : "【KOC2026 OPラップ】";
 
-      const shareUrl = "https://baba0129orz.github.io/KOC-LyricBingo-2026/";
+      const shareUrl = OFFICIAL_BASE_URL;
       const hashtag = "#KOCリリック予想ビンゴ";
 
       let text = "";
