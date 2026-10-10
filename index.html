@@ -4,6 +4,16 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>KOCリリック予想ビンゴ | キングオブコント2026</title>
+  
+  <!-- OGP Meta Tags for SNS & X (Twitter) -->
+  <meta property="og:title" content="KOCリリック予想ビンゴ | キングオブコント2026" />
+  <meta property="og:description" content="梅田サイファーの紹介ラップで飛び出す言葉を的中させろ！" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://baba0129orz.github.io/KOC-LyricBingo-2026/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="KOCリリック予想ビンゴ | キングオブコント2026" />
+  <meta name="twitter:description" content="梅田サイファーの紹介ラップで飛び出す言葉を的中させろ！" />
+
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter, Dela Gothic One, M PLUS Rounded 1c -->
@@ -83,6 +93,7 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-rose-200">
 
+  <!-- Header -->
   <header class="bg-white border-b-4 border-[#1E1E2F] sticky top-0 z-40 px-3 sm:px-6 py-2.5 sm:py-3 shadow-sm">
     <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2 sm:gap-3">
@@ -116,6 +127,7 @@
 
   <main class="flex-grow max-w-6xl mx-auto w-full p-3 sm:p-6 lg:p-8 space-y-6">
 
+    <!-- STEP 1: Artist Selector -->
     <section class="w-full bg-white rounded-2xl border-thick p-3.5 sm:p-4 shadow-pop-sm">
       <div class="flex items-center justify-between mb-2">
         <h2 class="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-1.5">
@@ -125,12 +137,12 @@
         <span class="text-[10px] text-slate-400 font-bold hidden sm:inline">2026 ファイナリスト（10組）</span>
       </div>
 
-      <!-- Finalist Buttons (Shuffled once on page load) -->
       <div id="artistTagsContainer" class="flex flex-wrap gap-1.5 sm:gap-2">
-        <!-- Dynamically rendered by JavaScript -->
+        <!-- Dynamically rendered -->
       </div>
     </section>
 
+    <!-- Main Grid Workspace -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
       <!-- LEFT: Bingo Board Area -->
@@ -192,6 +204,7 @@
         </p>
       </section>
 
+      <!-- RIGHT: Tools & Action Panels -->
       <section class="lg:col-span-5 flex flex-col gap-4">
 
         <!-- STEP 2: Mode Selector -->
@@ -255,6 +268,7 @@
           </button>
         </div>
 
+        <!-- STEP 3: Save and Share Controls -->
         <div class="bg-white rounded-2xl border-thick p-4 shadow-pop-sm space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
@@ -294,8 +308,9 @@
     </div>
   </main>
 
+  <!-- Footer (Max-width aligned with main content max-w-6xl) -->
   <footer class="w-full bg-slate-900 text-slate-300 py-10 px-3 sm:px-6 border-t-4 border-slate-800 mt-14">
-    <div class="max-w-2xl mx-auto space-y-5 text-center">
+    <div class="max-w-6xl mx-auto space-y-5 text-center">
 
       <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-4 sm:p-6 shadow-sm space-y-3.5">
         <div class="space-y-1.5">
@@ -332,6 +347,7 @@
     </div>
   </footer>
 
+  <!-- Cell Edit Modal -->
   <div id="cellEditModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
     <div class="bg-white rounded-3xl border-thick-4 shadow-pop w-full max-w-sm p-5 relative animate-stamp">
       <div class="flex items-center justify-between mb-3 border-b-2 border-slate-200 pb-2">
@@ -385,6 +401,7 @@
     </div>
   </div>
 
+  <!-- Bulk Import Modal -->
   <div id="bulkImportModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop hidden">
     <div class="bg-white rounded-3xl border-thick-4 shadow-pop w-full max-w-md p-5 relative animate-stamp">
       <div class="flex items-center justify-between mb-3 border-b-2 border-slate-200 pb-2">
@@ -431,6 +448,7 @@
     </div>
   </div>
 
+  <!-- Image Preview Modal -->
   <div id="imagePreviewModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 modal-backdrop hidden">
     <div class="bg-white rounded-3xl border-thick-4 shadow-pop w-full max-w-md max-h-[92vh] flex flex-col p-4 sm:p-5 relative overflow-hidden">
       
@@ -583,11 +601,13 @@
     let currentImageBlob = null;
     let currentImageFileName = "KOC_BINGO.png";
 
+    // Umeda Cypher KOC Historical Whitelist
     const UMEDA_KOC_WHITELIST = [
       "クズ", "狂気", "怪物", "バカ", "変なやつ", "底辺", "ケツ", "悪め", 
       "毒", "泥棒", "ヤクザ", "サイコ", "変人", "暴れる", "沼", "殺すな", "刺す"
     ];
 
+    // Obfuscated Disallowed Terms (Base64)
     const HARASSMENT_TERMS_B64 = [
       "5q2744Gt", "5q2744Gt44KI", "5q2744KT44Gn44KL", "5q6644GZ", "5raI44GI44KN", "5raI44GI44KN44KI",
       "5LiL5omL44GP44Gd", "5LiL5omL44GZ44GO", "44Gk44G+44KJ44Gq44GE", "6Z2i55m944GP44Gq44GE",
@@ -1548,18 +1568,11 @@
         text = `🏆 キングオブコント2026 OPラップ歌詞予想！\n${targetLabel}\n\n梅田サイファーの紹介ラップで飛び出す言葉を予想しました！\n何個当たるか放送で答え合わせ🔥\n`;
       }
 
-      let shareUrl = "";
-      const currentUrl = window.location.href;
-      if (!currentUrl.startsWith("blob:") && !currentUrl.includes("usercontent.goog")) {
-        shareUrl = currentUrl.split("#")[0];
-      }
-
+      // Dedicated GitHub Pages URL
+      const shareUrl = "https://baba0129orz.github.io/KOC-LyricBingo-2026/";
       const hashtags = "KOCリリック予想ビンゴ";
       
-      let tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&hashtags=${encodeURIComponent(hashtags)}`;
-      if (shareUrl) {
-        tweetUrl += `&url=${encodeURIComponent(shareUrl)}`;
-      }
+      const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent(hashtags)}`;
 
       window.open(tweetUrl, "_blank", "noopener,noreferrer");
     }
@@ -1571,6 +1584,7 @@
       modalShareXBtn.addEventListener("click", openXShareIntent);
     }
 
+    // Initialize application on load
     window.addEventListener("DOMContentLoaded", () => {
       shuffledFinalists = [...FINALISTS_2026].sort(() => Math.random() - 0.5);
 
