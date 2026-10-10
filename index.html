@@ -1663,20 +1663,19 @@
 
       // Vanity search avoidance: space out artist name (e.g. ダ ウ 9 0 0 0 0)
       const spacedArtist = currentArtist ? currentArtist.split("").join(" ") : "";
-      const targetLabel = spacedArtist ? `【予想: ${spacedArtist}】` : "【KOC2026 オープニングラップ】";
+      const targetLabel = spacedArtist ? `【予想: ${spacedArtist}】` : "【KOC2026 OPラップ】";
+
+      const shareUrl = "https://baba0129orz.github.io/KOC-LyricBingo-2026/";
+      const hashtag = "#KOCリリック予想ビンゴ";
 
       let text = "";
       if (isResultState) {
-        text = `🏆 キングオブコント2026 OPラップ歌詞予想！\n${targetLabel}\n結果: ${hits}HIT / ${bingos}BINGO達成！🎉\n\n梅田サイファーの紹介ラップ、ここまで的中しました！🔥\n`;
+        text = `🏆KOC2026 OPラップ歌詞予想！\n${targetLabel}\n結果: ${hits}HIT / ${bingos}BINGO達成！🎉\n\n梅田サイファーの紹介ラップ、ここまで的中しました！🔥\n\n${hashtag}\n${shareUrl}`;
       } else {
-        text = `🏆 キングオブコント2026 OPラップ歌詞予想！\n${targetLabel}\n\n梅田サイファーの紹介ラップで飛び出す言葉を予想しました！\n何個当たるか放送で答え合わせ🔥\n`;
+        text = `🏆KOC2026 OPラップ歌詞予想！\n${targetLabel}\n\n梅田サイファーの紹介ラップで飛び出す言葉を予想しました！\n何個当たるか放送で答え合わせ🔥\n\n${hashtag}\n${shareUrl}`;
       }
 
-      // Dedicated GitHub Pages URL
-      const shareUrl = "https://baba0129orz.github.io/KOC-LyricBingo-2026/";
-      const hashtags = "KOCリリック予想ビンゴ";
-      
-      const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(shareUrl)}&hashtags=${encodeURIComponent(hashtags)}`;
+      const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
 
       window.open(tweetUrl, "_blank", "noopener,noreferrer");
     }
