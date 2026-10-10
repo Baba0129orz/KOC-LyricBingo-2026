@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>KOCリリック予想ビンゴ | キングオブコント2026</title>
   
   <!-- OGP Meta Tags for SNS & X (Twitter) -->
@@ -95,7 +95,7 @@
 
   <!-- Header -->
   <header class="bg-white border-b-4 border-[#1E1E2F] sticky top-0 z-40 px-3 sm:px-6 py-2.5 sm:py-3 shadow-sm">
-    <div class="max-w-6xl mx-auto flex items-center justify-between gap-2">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2 sm:gap-3">
         <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-popRed text-white flex items-center justify-center font-impact text-lg sm:text-xl shadow-pop-sm border-2 border-slate-900 flex-shrink-0">
           🎤
@@ -114,7 +114,7 @@
       </div>
 
       <!-- Size Switcher Buttons (5x5 / 3x3) -->
-      <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border-2 border-slate-800">
+      <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-xl border-2 border-slate-800 flex-shrink-0">
         <button id="btnSize5" class="px-3 py-1 sm:py-1.5 text-xs font-black rounded-lg transition-all bg-popYellow text-slate-900 shadow-sm border border-slate-800">
           5×5
         </button>
@@ -125,10 +125,11 @@
     </div>
   </header>
 
-  <main class="flex-grow max-w-6xl mx-auto w-full p-3 sm:p-6 lg:p-8 space-y-6">
+  <!-- Main Container -->
+  <main class="flex-grow max-w-5xl mx-auto w-full p-3 sm:p-6 space-y-5 sm:space-y-6">
 
     <!-- STEP 1: Artist Selector -->
-    <section class="w-full bg-white rounded-2xl border-thick p-3.5 sm:p-4 shadow-pop-sm">
+    <section class="w-full bg-white rounded-2xl border-thick p-3 sm:p-4 shadow-pop-sm">
       <div class="flex items-center justify-between mb-2">
         <h2 class="text-xs sm:text-sm font-black text-slate-800 flex items-center gap-1.5">
           <span class="bg-popRed text-white text-[10px] font-black px-2 py-0.5 rounded-md">STEP 1</span>
@@ -143,19 +144,22 @@
     </section>
 
     <!-- Main Grid Workspace -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-start">
 
       <!-- LEFT: Bingo Board Area -->
-      <section class="lg:col-span-7 flex flex-col items-center">
-        <div id="bingoCardWrapper" class="w-full max-w-[500px] bg-white rounded-3xl border-thick-4 shadow-pop p-3.5 sm:p-5 relative transition-all">
+      <section class="lg:col-span-7 flex flex-col items-center w-full">
+        <div id="bingoCardWrapper" class="w-full bg-white rounded-3xl border-thick-4 shadow-pop p-3 sm:p-5 relative transition-all">
           
+          <!-- Punch Hole Decorative Circle -->
+          <div class="absolute -top-3 left-1/2 -translate-x-1/2 w-6 h-6 rounded-full bg-[#FAF5EF] border-2 border-slate-900 z-10"></div>
+
           <!-- Board Header -->
           <div class="text-center pb-2.5 mb-2.5 border-b-2 border-dashed border-slate-300">
             <div class="flex items-center justify-center gap-2 mb-0.5">
-              <span class="bg-popDark text-white text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+              <span class="bg-popDark text-white text-[10px] sm:text-[11px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
                 KOCリリック予想ビンゴ
               </span>
-              <span id="boardSizeBadge" class="bg-amber-100 text-amber-800 text-[11px] font-black px-2 py-0.5 rounded-full border border-amber-300">
+              <span id="boardSizeBadge" class="bg-amber-100 text-amber-800 text-[10px] sm:text-[11px] font-black px-2 py-0.5 rounded-full border border-amber-300">
                 5×5
               </span>
             </div>
@@ -163,13 +167,13 @@
             <h2 id="boardArtistTitle" class="text-xl sm:text-2xl font-impact tracking-tight text-popRed truncate px-2">
               芸人を選択
             </h2>
-            <p class="text-[11px] text-slate-500 font-bold">
+            <p class="text-[10px] sm:text-[11px] text-slate-500 font-bold">
               梅田サイファーの紹介ラップで飛び出す言葉を的中させろ！
             </p>
           </div>
 
           <!-- Counter Banner -->
-          <div class="flex items-center justify-between bg-amber-50 rounded-xl border-2 border-slate-800 px-3 py-1.5 mb-3 font-bold text-xs sm:text-sm">
+          <div class="flex items-center justify-between bg-amber-50 rounded-xl border-2 border-slate-800 px-3 py-1.5 mb-2.5 font-bold text-xs sm:text-sm">
             <div class="flex items-center gap-1.5">
               <span class="text-slate-500">HIT:</span>
               <span id="hitCount" class="text-base sm:text-lg font-black text-popRed">0</span>
@@ -183,13 +187,16 @@
             </div>
           </div>
 
+          <!-- CONTE / KOC Column Header Letters -->
+          <div id="bingoLettersHeader" class="grid grid-cols-5 gap-1.5 sm:gap-2 mb-1.5 select-none"></div>
+
           <!-- BINGO GRID CONTAINER -->
           <div id="bingoGrid" class="grid grid-cols-5 gap-1.5 sm:gap-2 select-none">
             <!-- Dynamically populated cells -->
           </div>
 
           <!-- Board Footer Info -->
-          <div class="mt-3 pt-2 border-t-2 border-slate-200 flex items-center justify-between text-[11px] text-slate-500 font-bold px-1">
+          <div class="mt-3 pt-2 border-t-2 border-slate-200 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500 font-bold px-1">
             <span id="boardFooterBadge">★ FINALIST ★</span>
             <div class="flex items-center gap-2">
               <span class="text-slate-400">#KOCリリック予想ビンゴ</span>
@@ -205,10 +212,10 @@
       </section>
 
       <!-- RIGHT: Tools & Action Panels -->
-      <section class="lg:col-span-5 flex flex-col gap-4">
+      <section class="lg:col-span-5 flex flex-col gap-4 w-full">
 
         <!-- STEP 2: Mode Selector -->
-        <div class="bg-white rounded-2xl border-thick p-4 shadow-pop-sm">
+        <div class="bg-white rounded-2xl border-thick p-3.5 sm:p-4 shadow-pop-sm">
           <div class="flex items-center justify-between mb-2">
             <h3 class="text-xs font-black text-slate-700 flex items-center gap-1.5">
               <span class="bg-popDark text-white text-[10px] font-black px-1.5 py-0.5 rounded">STEP 2</span>
@@ -240,8 +247,8 @@
         </div>
 
         <!-- Utilities & Bulk Import -->
-        <div class="bg-white rounded-2xl border-thick p-4 shadow-pop-sm space-y-2.5">
-          <h3 class="text-xs font-black text-slate-700 mb-2 flex items-center gap-1.5">
+        <div class="bg-white rounded-2xl border-thick p-3.5 sm:p-4 shadow-pop-sm space-y-2.5">
+          <h3 class="text-xs font-black text-slate-700 mb-1 flex items-center gap-1.5">
             <span>⚡</span>
             <span>便利ツール・一括入力</span>
           </h3>
@@ -263,13 +270,13 @@
             </button>
           </div>
 
-          <button id="resetAllBtn" class="w-full py-1.5 px-2 text-[10px] font-bold text-rose-500 hover:text-rose-700 hover:underline text-center block pt-1">
+          <button id="resetAllBtn" class="w-full py-1 px-2 text-[10px] font-bold text-rose-500 hover:text-rose-700 hover:underline text-center block pt-0.5">
             ⚠️ 全マスを空欄にして初期化する
           </button>
         </div>
 
         <!-- STEP 3: Save and Share Controls -->
-        <div class="bg-white rounded-2xl border-thick p-4 shadow-pop-sm space-y-3">
+        <div class="bg-white rounded-2xl border-thick p-3.5 sm:p-4 shadow-pop-sm space-y-3">
           <div class="flex items-center justify-between">
             <h3 class="text-xs font-black text-slate-800 flex items-center gap-1.5">
               <span class="bg-popRed text-white text-[10px] font-black px-1.5 py-0.5 rounded">STEP 3</span>
@@ -294,10 +301,10 @@
 
           <!-- Action Buttons -->
           <div class="grid grid-cols-2 gap-2">
-            <button id="saveImageBtn" class="py-2.5 px-2.5 rounded-xl bg-popYellow hover:bg-amber-300 text-slate-900 font-black text-xs sm:text-sm border-thick shadow-pop-sm active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center gap-1.5">
+            <button id="saveImageBtn" class="py-2.5 px-2 rounded-xl bg-popYellow hover:bg-amber-300 text-slate-900 font-black text-xs sm:text-sm border-thick shadow-pop-sm active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center gap-1.5">
               <span>🖼️ ① 画像を保存</span>
             </button>
-            <button id="shareXBtn" class="py-2.5 px-2.5 rounded-xl bg-black hover:bg-slate-900 text-white font-black text-xs sm:text-sm border-thick shadow-pop-sm active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center gap-1.5">
+            <button id="shareXBtn" class="py-2.5 px-2 rounded-xl bg-black hover:bg-slate-900 text-white font-black text-xs sm:text-sm border-thick shadow-pop-sm active:translate-y-0.5 active:shadow-none transition-all flex items-center justify-center gap-1.5">
               <svg class="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
               <span>② Xでシェア</span>
             </button>
@@ -308,9 +315,9 @@
     </div>
   </main>
 
-  <!-- Footer (Max-width aligned with main content max-w-6xl) -->
+  <!-- Footer (Aligned perfectly with max-w-5xl) -->
   <footer class="w-full bg-slate-900 text-slate-300 py-10 px-3 sm:px-6 border-t-4 border-slate-800 mt-14">
-    <div class="max-w-6xl mx-auto space-y-5 text-center">
+    <div class="max-w-5xl mx-auto space-y-5 text-center">
 
       <div class="bg-slate-800/70 border border-slate-700/80 rounded-2xl p-4 sm:p-6 shadow-sm space-y-3.5">
         <div class="space-y-1.5">
@@ -601,13 +608,13 @@
     let currentImageBlob = null;
     let currentImageFileName = "KOC_BINGO.png";
 
-    // Umeda Cypher KOC Historical Whitelist
+    // Umeda Cypher KOC Historical Whitelist (Words permitted without block)
     const UMEDA_KOC_WHITELIST = [
       "クズ", "狂気", "怪物", "バカ", "変なやつ", "底辺", "ケツ", "悪め", 
       "毒", "泥棒", "ヤクザ", "サイコ", "変人", "暴れる", "沼", "殺すな", "刺す"
     ];
 
-    // Obfuscated Disallowed Terms (Base64)
+    // Obfuscated Disallowed Terms (Base64) - Pure harassment / slander
     const HARASSMENT_TERMS_B64 = [
       "5q2744Gt", "5q2744Gt44KI", "5q2744KT44Gn44KL", "5q6644GZ", "5raI44GI44KN", "5raI44GI44KN44KI",
       "5LiL5omL44GP44Gd", "5LiL5omL44GZ44GO", "44Gk44G+44KJ44Gq44GE", "6Z2i55m944GP44Gq44GE",
@@ -744,7 +751,7 @@
         const btn = document.createElement("button");
         const isSelected = (currentArtist === team);
         btn.type = "button";
-        btn.className = `px-3.5 py-2 rounded-xl text-xs font-black transition-all border-2 active:scale-95 flex items-center gap-1 ${
+        btn.className = `px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-xl text-xs font-black transition-all border-2 active:scale-95 flex items-center gap-1 ${
           isSelected
             ? "bg-popRed text-white border-slate-900 shadow-pop-sm scale-105"
             : "bg-slate-100 hover:bg-slate-200 text-slate-800 border-slate-300"
@@ -804,14 +811,26 @@
         if (colFull) bingos++;
       }
 
-      // Diagonals
+      // Diagonal top-left to bottom-right
       let diag1Full = true;
-      let diag2Full = true;
       for (let i = 0; i < size; i++) {
-        if (!boardCells[i * size + i] || !boardCells[i * size + i].hit) diag1Full = false;
-        if (!boardCells[i * size + (size - 1 - i)] || !boardCells[i * size + (size - 1 - i)].hit) diag2Full = false;
+        const idx = i * size + i;
+        if (!boardCells[idx] || !boardCells[idx].hit) {
+          diag1Full = false;
+          break;
+        }
       }
       if (diag1Full) bingos++;
+
+      // Diagonal top-right to bottom-left
+      let diag2Full = true;
+      for (let i = 0; i < size; i++) {
+        const idx = i * size + (size - 1 - i);
+        if (!boardCells[idx] || !boardCells[idx].hit) {
+          diag2Full = false;
+          break;
+        }
+      }
       if (diag2Full) bingos++;
 
       hitCountEl.textContent = hits;
@@ -819,7 +838,25 @@
       totalCellsCountEl.textContent = total;
     }
 
+    function renderBingoLetters() {
+      const lettersContainer = document.getElementById("bingoLettersHeader");
+      if (!lettersContainer) return;
+      const size = currentSize;
+      const chars = size === 5 ? ["C", "O", "N", "T", "E"] : ["K", "O", "C"];
+      const colors = size === 5
+        ? ["bg-red-500", "bg-amber-500", "bg-emerald-500", "bg-sky-500", "bg-purple-500"]
+        : ["bg-red-500", "bg-amber-500", "bg-sky-500"];
+
+      lettersContainer.className = `grid grid-cols-${size} gap-1.5 sm:gap-2 mb-1.5 select-none`;
+      lettersContainer.innerHTML = chars.map((ch, idx) => `
+        <div class="h-6 sm:h-7 rounded-lg ${colors[idx % colors.length]} text-white font-impact text-xs sm:text-sm flex items-center justify-center border-2 border-slate-900 shadow-pop-inner tracking-wider">
+          ${ch}
+        </div>
+      `).join("");
+    }
+
     function renderBoard() {
+      renderBingoLetters();
       bingoGridEl.innerHTML = "";
       const size = currentSize;
       const center = getCenterIndex(size);
@@ -833,7 +870,7 @@
         const cellBtn = document.createElement("button");
         cellBtn.type = "button";
 
-        let baseClass = "aspect-square relative rounded-xl border-2 transition-all flex flex-col items-center justify-center p-1 overflow-hidden group ";
+        let baseClass = "aspect-square relative rounded-xl border-2 transition-all flex flex-col items-center justify-center p-0.5 sm:p-1 overflow-hidden group ";
 
         if (isFree) {
           baseClass += "bg-gradient-to-b from-amber-50 to-amber-100 border-amber-400 ";
@@ -1253,66 +1290,92 @@
       const center = getCenterIndex(size);
       const isDow = isDow90000(currentArtist);
 
+      // Tight, premium 4:5-ish mobile-optimized aspect ratio
       const width = 1200;
-      const height = 1480;
+      const height = 1380;
       canvas.width = width;
       canvas.height = height;
 
+      // Background patterned table
       ctx.fillStyle = "#FAF5EF";
       ctx.fillRect(0, 0, width, height);
 
-      ctx.fillStyle = "#E5DED4";
-      for (let x = 20; x < width; x += 36) {
-        for (let y = 20; y < height; y += 36) {
+      ctx.fillStyle = "#E2D9CC";
+      for (let x = 20; x < width; x += 32) {
+        for (let y = 20; y < height; y += 32) {
           ctx.beginPath();
-          ctx.arc(x, y, 2.2, 0, Math.PI * 2);
+          ctx.arc(x, y, 2.0, 0, Math.PI * 2);
           ctx.fill();
         }
       }
 
-      const cardX = 45;
-      const cardY = 40;
-      const cardW = width - 90;
-      const cardH = 1350;
+      const cardX = 40;
+      const cardY = 36;
+      const cardW = width - 80; // 1120px
+      const cardH = height - 84; // 1260px
 
+      // Drop shadow for the card
       ctx.fillStyle = "#1E1E2F";
-      drawSafeRoundRect(ctx, cardX + 8, cardY + 8, cardW, cardH, 28);
+      drawSafeRoundRect(ctx, cardX + 10, cardY + 10, cardW, cardH, 36);
       ctx.fill();
 
-      ctx.fillStyle = "#FFFFFF";
-      drawSafeRoundRect(ctx, cardX, cardY, cardW, cardH, 28);
+      // Card body
+      ctx.fillStyle = "#FFFDF9";
+      drawSafeRoundRect(ctx, cardX, cardY, cardW, cardH, 36);
       ctx.fill();
       ctx.strokeStyle = "#1E1E2F";
       ctx.lineWidth = 6;
       ctx.stroke();
 
+      // Inner ticket dashed border
+      ctx.save();
+      ctx.strokeStyle = "#E2D9CC";
+      ctx.lineWidth = 2.5;
+      ctx.setLineDash([8, 8]);
+      drawSafeRoundRect(ctx, cardX + 14, cardY + 14, cardW - 28, cardH - 28, 26);
+      ctx.stroke();
+      ctx.restore();
+
+      // Punch Hole at the top of the card
+      ctx.fillStyle = "#FAF5EF";
+      ctx.beginPath();
+      ctx.arc(width / 2, cardY + 12, 16, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = "#1E1E2F";
+      ctx.lineWidth = 4.5;
+      ctx.stroke();
+
+      // Top Tag Badge
       ctx.fillStyle = "#1E1E2F";
-      drawSafeRoundRect(ctx, width / 2 - 160, cardY + 28, 320, 36, 18);
+      drawSafeRoundRect(ctx, width / 2 - 140, cardY + 32, 280, 32, 16);
       ctx.fill();
 
       ctx.fillStyle = "#FFFFFF";
-      ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
+      ctx.font = 'bold 16px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText("KOCリリック予想ビンゴ", width / 2, cardY + 52);
+      ctx.fillText("KOC 2026 OP RAP BINGO", width / 2, cardY + 54);
 
+      // Artist Title
       const displayTitle = currentArtist || "芸人を選択";
       ctx.fillStyle = "#FF3131";
       const titleLen = displayTitle.length;
-      const titleFontSize = titleLen > 14 ? 36 : (titleLen > 10 ? 42 : (titleLen > 6 ? 46 : 52));
+      const titleFontSize = titleLen > 14 ? 38 : (titleLen > 10 ? 44 : (titleLen > 6 ? 48 : 54));
       ctx.font = `bold ${titleFontSize}px "Dela Gothic One", "M PLUS Rounded 1c", sans-serif`;
-      ctx.fillText(displayTitle, width / 2, cardY + 115);
+      ctx.fillText(displayTitle, width / 2, cardY + 112);
 
+      // Subtitle
       ctx.fillStyle = "#64748B";
-      ctx.font = 'bold 20px "M PLUS Rounded 1c", sans-serif';
-      ctx.fillText("梅田サイファーの紹介ラップで飛び出す言葉を的中させろ！", width / 2, cardY + 152);
+      ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
+      ctx.fillText("梅田サイファーの紹介ラップで飛び出す言葉を的中させろ！", width / 2, cardY + 144);
 
-      const statsY = cardY + 172;
+      // Stats Banner
+      const statsY = cardY + 162;
       const statsW = cardW - 80;
       ctx.fillStyle = "#FEF3C7";
-      drawSafeRoundRect(ctx, cardX + 40, statsY, statsW, 46, 14);
+      drawSafeRoundRect(ctx, cardX + 40, statsY, statsW, 40, 12);
       ctx.fill();
       ctx.strokeStyle = "#1E1E2F";
-      ctx.lineWidth = 3.5;
+      ctx.lineWidth = 3;
       ctx.stroke();
 
       const hits = hitCountEl.textContent;
@@ -1320,15 +1383,47 @@
       const total = size * size;
 
       ctx.fillStyle = "#1E1E2F";
-      ctx.font = 'bold 22px "M PLUS Rounded 1c", sans-serif';
+      ctx.font = 'bold 20px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText(`HIT: ${hits} / ${total}　　|　　BINGO: ${bingos} 列達成！`, width / 2, statsY + 31);
+      ctx.fillText(`HIT: ${hits} / ${total}　　|　　BINGO: ${bingos} 列達成！`, width / 2, statsY + 27);
 
-      const gridAreaY = cardY + 236;
-      const gridAreaSize = 920;
+      // Grid Coordinates: Expanded to 1000px to fill width and reduce wasted space
+      const gridAreaSize = 1000;
       const gridAreaX = (width - gridAreaSize) / 2;
       const gap = size === 5 ? 12 : 16;
       const cellSize = (gridAreaSize - (size - 1) * gap) / size;
+
+      // Draw C-O-N-T-E (or K-O-C) column header row
+      const lettersY = cardY + 216;
+      const lettersH = 50;
+      const headerChars = size === 5 ? ["C", "O", "N", "T", "E"] : ["K", "O", "C"];
+      const headerColors = size === 5
+        ? ["#EF4444", "#F59E0B", "#10B981", "#0EA5E9", "#8B5CF6"]
+        : ["#EF4444", "#F59E0B", "#0EA5E9"];
+
+      for (let c = 0; c < size; c++) {
+        const hx = gridAreaX + c * (cellSize + gap);
+        
+        // Pop drop shadow for letters
+        ctx.fillStyle = "#1E1E2F";
+        drawSafeRoundRect(ctx, hx + 3, lettersY + 4, cellSize, lettersH, 14);
+        ctx.fill();
+
+        ctx.fillStyle = headerColors[c % headerColors.length];
+        drawSafeRoundRect(ctx, hx, lettersY, cellSize, lettersH, 14);
+        ctx.fill();
+        ctx.strokeStyle = "#1E1E2F";
+        ctx.lineWidth = 3.5;
+        ctx.stroke();
+
+        ctx.fillStyle = "#FFFFFF";
+        ctx.font = 'bold 30px "Dela Gothic One", sans-serif';
+        ctx.textAlign = "center";
+        ctx.fillText(headerChars[c], hx + cellSize / 2, lettersY + 36);
+      }
+
+      // Draw Bingo Cells
+      const gridAreaY = lettersY + lettersH + gap;
 
       for (let r = 0; r < size; r++) {
         for (let c = 0; c < size; c++) {
@@ -1338,10 +1433,15 @@
           const cx = gridAreaX + c * (cellSize + gap);
           const cy = gridAreaY + r * (cellSize + gap);
 
+          // Subtle cell shadow
+          ctx.fillStyle = "#1E1E2F";
+          drawSafeRoundRect(ctx, cx + 2.5, cy + 3.5, cellSize, cellSize, 16);
+          ctx.fill();
+
           if (isFree) {
             ctx.fillStyle = "#FEF3C7";
           } else if (cell.hit) {
-            ctx.fillStyle = "#FFF1F2";
+            ctx.fillStyle = "#FFE4E6";
           } else {
             ctx.fillStyle = "#FFFFFF";
           }
@@ -1349,19 +1449,19 @@
           drawSafeRoundRect(ctx, cx, cy, cellSize, cellSize, 16);
           ctx.fill();
 
-          ctx.strokeStyle = isFree ? "#F59E0B" : (cell.hit ? "#FDA4AF" : "#CBD5E1");
-          ctx.lineWidth = 3.5;
+          ctx.strokeStyle = isFree ? "#F59E0B" : (cell.hit ? "#FB7185" : "#1E1E2F");
+          ctx.lineWidth = isFree || cell.hit ? 3.5 : 3;
           ctx.stroke();
 
           if (isFree) {
             ctx.fillStyle = "#F59E0B";
-            ctx.font = '38px "M PLUS Rounded 1c", sans-serif';
+            ctx.font = '42px "M PLUS Rounded 1c", sans-serif';
             ctx.textAlign = "center";
-            ctx.fillText(isDow ? "🦀" : "👑", cx + cellSize / 2, cy + cellSize / 2 - 2);
+            ctx.fillText(isDow ? "🦀" : "👑", cx + cellSize / 2, cy + cellSize / 2 - 4);
 
             ctx.fillStyle = "#1E1E2F";
-            ctx.font = 'bold 22px "Dela Gothic One", sans-serif';
-            ctx.fillText("FREE", cx + cellSize / 2, cy + cellSize / 2 + 30);
+            ctx.font = 'bold 24px "Dela Gothic One", sans-serif';
+            ctx.fillText("FREE", cx + cellSize / 2, cy + cellSize / 2 + 32);
           } else {
             const rawText = cell.text ? cell.text.trim() : "";
             if (rawText) {
@@ -1369,82 +1469,86 @@
               ctx.textAlign = "center";
 
               const len = rawText.length;
-              let fontSize = size === 5 ? 26 : 34;
+              let fontSize = size === 5 ? 28 : 36;
 
               if (size === 5) {
-                if (len > 12) fontSize = 13;
-                else if (len > 10) fontSize = 15;
-                else if (len > 8) fontSize = 17;
-                else if (len > 6) fontSize = 20;
-                else if (len > 4) fontSize = 23;
+                if (len > 12) fontSize = 15;
+                else if (len > 10) fontSize = 17;
+                else if (len > 8) fontSize = 19;
+                else if (len > 6) fontSize = 22;
+                else if (len > 4) fontSize = 25;
               } else {
-                if (len > 12) fontSize = 18;
-                else if (len > 10) fontSize = 21;
-                else if (len > 8) fontSize = 24;
-                else if (len > 6) fontSize = 27;
-                else if (len > 4) fontSize = 30;
+                if (len > 12) fontSize = 20;
+                else if (len > 10) fontSize = 23;
+                else if (len > 8) fontSize = 26;
+                else if (len > 6) fontSize = 30;
+                else if (len > 4) fontSize = 33;
               }
 
               ctx.font = `bold ${fontSize}px "M PLUS Rounded 1c", sans-serif`;
               ctx.fillText(rawText, cx + cellSize / 2, cy + cellSize / 2 + (fontSize * 0.35));
             } else {
               ctx.fillStyle = "#CBD5E1";
-              ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
+              ctx.font = 'bold 20px "M PLUS Rounded 1c", sans-serif';
               ctx.textAlign = "center";
-              ctx.fillText(`#${idx + 1}`, cx + cellSize / 2, cy + cellSize / 2 + 6);
+              ctx.fillText(`#${idx + 1}`, cx + cellSize / 2, cy + cellSize / 2 + 7);
             }
           }
 
+          // HIT Rubber Stamp
           if (cell.hit && !isFree) {
             ctx.save();
-            ctx.translate(cx + cellSize - 22, cy + 22);
+            ctx.translate(cx + cellSize - 24, cy + 24);
             if (isDow) {
-              ctx.font = "28px sans-serif";
+              ctx.font = "32px sans-serif";
               ctx.textAlign = "center";
-              ctx.fillText("🦀", 0, 8);
+              ctx.fillText("🦀", 0, 10);
             } else {
               ctx.rotate(-15 * Math.PI / 180);
               ctx.fillStyle = "#FF3131";
               ctx.beginPath();
-              ctx.arc(0, 0, 20, 0, Math.PI * 2);
+              ctx.arc(0, 0, 22, 0, Math.PI * 2);
               ctx.fill();
               ctx.strokeStyle = "#1E1E2F";
               ctx.lineWidth = 2.5;
               ctx.stroke();
 
               ctx.fillStyle = "#FFFFFF";
-              ctx.font = 'bold 12px "Dela Gothic One", sans-serif';
+              ctx.font = 'bold 13px "Dela Gothic One", sans-serif';
               ctx.textAlign = "center";
-              ctx.fillText("HIT!", 0, 4);
+              ctx.fillText("HIT!", 0, 5);
             }
             ctx.restore();
           }
         }
       }
 
-      const footerY = gridAreaY + gridAreaSize + 28;
+      // Compact Footer directly under grid: No more wasted empty space!
+      const cellsBottomY = gridAreaY + gridAreaSize;
+      const footerY = cellsBottomY + 28;
       const footerBadgeText = currentArtist ? `★ ${currentArtist.toUpperCase()} ★` : "★ FINALIST ★";
 
       ctx.fillStyle = "#64748B";
       ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(footerBadgeText, gridAreaX + 10, footerY);
+      ctx.fillText(footerBadgeText, gridAreaX + 6, footerY);
 
       ctx.textAlign = "right";
-      ctx.fillText("#KOCリリック予想ビンゴ", gridAreaX + gridAreaSize - 10, footerY);
+      ctx.fillText("#KOCリリック予想ビンゴ", gridAreaX + gridAreaSize - 6, footerY);
 
       ctx.fillStyle = "#94A3B8";
       ctx.font = 'bold 15px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText("Created by @Baba0129orz", width / 2, footerY + 28);
+      ctx.fillText("Created by @Baba0129orz", width / 2, footerY + 22);
 
+      // Bottom disclaimer line just below the card
       ctx.fillStyle = "#64748B";
-      ctx.font = 'bold 13px "M PLUS Rounded 1c", sans-serif';
+      ctx.font = 'bold 12.5px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
       ctx.fillText(
         "※本ツールはファンによる非公式の予想企画です。TBSや公式関係者、出演者等とは一切関係ありません。",
         width / 2,
-        height - 30
+        height - 14
       );
 
       return canvas.toDataURL("image/png");
@@ -1584,7 +1688,6 @@
       modalShareXBtn.addEventListener("click", openXShareIntent);
     }
 
-    // Initialize application on load
     window.addEventListener("DOMContentLoaded", () => {
       shuffledFinalists = [...FINALISTS_2026].sort(() => Math.random() - 0.5);
 
