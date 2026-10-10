@@ -16,7 +16,7 @@
   <meta name="twitter:description" content="OP紹介ラップで飛び出す言葉を的中させろ！" />
   <meta name="twitter:image" content="https://baba0129orz.github.io/KOC-LyricBingo-2026/ogp.jpg" />
 
-  <!-- Favicon / Web App Icons (Crown SVG: No upload needed) -->
+  <!-- Favicon / Web App Icons (Crown SVG) -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
   <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
 
@@ -99,7 +99,7 @@
 </head>
 <body class="text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-rose-200">
 
-  <!-- Header: Cleaned up & simplified -->
+  <!-- Header -->
   <header class="bg-white border-b-4 border-[#1E1E2F] sticky top-0 z-40 px-3 sm:px-6 py-2.5 sm:py-3 shadow-sm">
     <div class="max-w-5xl mx-auto flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5 sm:gap-3">
@@ -288,7 +288,7 @@
             <span class="text-[10px] text-slate-400 font-bold">画像保存 ➔ ポスト</span>
           </div>
 
-          <!-- 2-Step Guide Banner (Centered completely) -->
+          <!-- 2-Step Guide Banner -->
           <div class="bg-gradient-to-r from-amber-50 to-rose-50 rounded-xl border border-slate-300 p-2.5">
             <div class="grid grid-cols-2 gap-2 text-[11px] font-bold text-slate-700">
               <div class="bg-white/90 rounded-lg p-2 border border-slate-200 flex items-center justify-center gap-1.5 text-center">
@@ -828,7 +828,7 @@
         // Make URL-safe: Replace + with -, / with _, remove padding =
         const urlSafeEncoded = encoded.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 
-        // Determine base URL (Ensure valid GitHub Pages origin even if in local/preview)
+        // Determine base URL
         let baseUrl = OFFICIAL_BASE_URL;
         if (window.location.origin && window.location.origin !== "null" && !window.location.href.startsWith("about:")) {
           baseUrl = window.location.origin + window.location.pathname;
@@ -1007,7 +1007,7 @@
           } else {
             if (length >= 10) fontSizeClass = "text-[10px] sm:text-xs";
             else if (length >= 7) fontSizeClass = "text-xs sm:text-sm";
-            else if (length >= 5) fontSizeClass = "text-sm sm:text-base";
+            else if (length >= 5) fontSizeClass = "text-sm sm:base";
           }
 
           if (text) {
@@ -1426,8 +1426,9 @@
       const center = getCenterIndex(size);
       const isDow = isDow90000(currentArtist);
 
+      // Re-calculated canvas height and card layout: Plenty of room for clean footer and disclaimer
       const width = 1200;
-      const height = 1380;
+      const height = 1520;
       canvas.width = width;
       canvas.height = height;
 
@@ -1446,8 +1447,8 @@
 
       const cardX = 40;
       const cardY = 36;
-      const cardW = width - 80;
-      const cardH = height - 84;
+      const cardW = width - 80;   // 1120px
+      const cardH = 1390;         // Card ends at 36 + 1390 = 1426px
 
       // Drop shadow for the card
       ctx.fillStyle = "#1E1E2F";
@@ -1523,7 +1524,7 @@
       ctx.fillText(`HIT: ${hits} / ${total}　　|　　BINGO: ${bingos} 列達成！`, width / 2, statsY + 27);
 
       // Grid Coordinates
-      const gridAreaSize = 1000;
+      const gridAreaSize = 980;
       const gridAreaX = (width - gridAreaSize) / 2;
       const gap = size === 5 ? 12 : 16;
       const cellSize = (gridAreaSize - (size - 1) * gap) / size;
@@ -1602,20 +1603,20 @@
               ctx.textAlign = "center";
 
               const len = rawText.length;
-              let fontSize = size === 5 ? 28 : 36;
+              let fontSize = size === 5 ? 27 : 35;
 
               if (size === 5) {
-                if (len > 12) fontSize = 15;
-                else if (len > 10) fontSize = 17;
-                else if (len > 8) fontSize = 19;
-                else if (len > 6) fontSize = 22;
-                else if (len > 4) fontSize = 25;
+                if (len > 12) fontSize = 14;
+                else if (len > 10) fontSize = 16;
+                else if (len > 8) fontSize = 18;
+                else if (len > 6) fontSize = 21;
+                else if (len > 4) fontSize = 24;
               } else {
-                if (len > 12) fontSize = 20;
-                else if (len > 10) fontSize = 23;
-                else if (len > 8) fontSize = 26;
-                else if (len > 6) fontSize = 30;
-                else if (len > 4) fontSize = 33;
+                if (len > 12) fontSize = 19;
+                else if (len > 10) fontSize = 22;
+                else if (len > 8) fontSize = 25;
+                else if (len > 6) fontSize = 29;
+                else if (len > 4) fontSize = 32;
               }
 
               ctx.font = `bold ${fontSize}px "M PLUS Rounded 1c", sans-serif`;
@@ -1656,32 +1657,33 @@
         }
       }
 
-      // Compact Footer directly under grid
-      const cellsBottomY = gridAreaY + gridAreaSize;
-      const footerY = cellsBottomY + 28;
+      // Clean footer inside card: perfectly positioned with plenty of breathing room
+      const cellsBottomY = gridAreaY + gridAreaSize; // 278 + 980 = 1258px
+      const footerY1 = cellsBottomY + 36;             // 1294px (Well within cardH of 1390px)
+      const footerY2 = footerY1 + 26;                 // 1320px
       const footerBadgeText = currentArtist ? `★ ${currentArtist.toUpperCase()} ★` : "★ FINALIST ★";
 
       ctx.fillStyle = "#64748B";
       ctx.font = 'bold 18px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "left";
-      ctx.fillText(footerBadgeText, gridAreaX + 6, footerY);
+      ctx.fillText(footerBadgeText, gridAreaX + 6, footerY1);
 
       ctx.textAlign = "right";
-      ctx.fillText("#KOCリリック予想ビンゴ", gridAreaX + gridAreaSize - 6, footerY);
+      ctx.fillText("#KOCリリック予想ビンゴ", gridAreaX + gridAreaSize - 6, footerY1);
 
       ctx.fillStyle = "#94A3B8";
       ctx.font = 'bold 15px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
-      ctx.fillText("Created by @Baba0129orz", width / 2, footerY + 22);
+      ctx.fillText("Created by @Baba0129orz", width / 2, footerY2);
 
-      // Bottom disclaimer line
+      // Bottom disclaimer line outside card on dotted pattern: cleanly isolated
       ctx.fillStyle = "#64748B";
-      ctx.font = 'bold 12.5px "M PLUS Rounded 1c", sans-serif';
+      ctx.font = 'bold 13px "M PLUS Rounded 1c", sans-serif';
       ctx.textAlign = "center";
       ctx.fillText(
         "※本ツールはファンによる非公式の予想企画です。TBSや公式関係者、出演者等とは一切関係ありません。",
         width / 2,
-        height - 14
+        height - 30
       );
 
       return canvas.toDataURL("image/png");
